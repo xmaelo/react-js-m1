@@ -1,10 +1,12 @@
+import React, { useState, useEffect }from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 import {
-  Box,
-  Button,
+  Box, 
+  Button, 
+  Avatar,
   Container,
   Grid,
   Link,
@@ -13,14 +15,58 @@ import {
 } from '@material-ui/core';
 import FacebookIcon from 'src/icons/Facebook';
 import GoogleIcon from 'src/icons/Google';
+import { auth } from './firebase';
 
 const Login = () => {
   const navigate = useNavigate();
+  const [values, setValues] = useState({})
+  const [email, setEmail] = useState("")
+  const [password, setPass] = useState("")
+  const [error, setError] = useState(false)
 
+  useEffect(() => { 
+    (async()  =>{
+        console.log('async run asyn run', auth.currentUser)
+       if(auth.currentUser){
+          console.log('before user admin', auth.currentUser)
+          auth.currentUser.getIdTokenResult().then((idTokenResult) => {
+            console.log('idTokenResult idTokenResult', idTokenResult)
+             if (!!idTokenResult.claims.admin) {
+                navigate('/', { replace: true });
+             }else {
+              setError(true);
+             }
+          }).catch((error) => {
+            console.log(error);
+          });
+       }
+      })()
+    }, []);
+
+  async function onLogin(e){
+    e.preventDefault();
+    try{
+      console.log('confirm', email, password)
+      let confirm = await auth.signInWithEmailAndPassword(email, password)
+      console.log('confirm confirm', confirm)
+      auth.currentUser.getIdTokenResult().then((idTokenResult) => {
+        console.log('idTokenResult idTokenResult', idTokenResult)
+         if (!!idTokenResult.claims.admin) {
+            navigate('/', { replace: true });
+         }else {
+          setError(true);
+         }
+      }).catch((error) => {
+        console.log(error);
+      });
+    }catch(e){
+      console.log('error logins', e)
+    }
+  }
   return (
     <>
       <Helmet>
-        <title>Login | Material Kit</title>
+        <title>Login | maMED</title>
       </Helmet>
       <Box
         sx={{
@@ -31,18 +77,30 @@ const Login = () => {
           justifyContent: 'center'
         }}
       >
-        <Container maxWidth="sm">
+        <Box display="flex" justifyContent="center" m={1} p={1} >
+          <Box p={1}>
+          </Box>
+          <Box p={1}>
+            <img
+              src={"/static/images/logo.png"}
+              height={150}
+              width={150}
+              alt="logo"
+            />
+          </Box>
+          <Box p={1}>
+          </Box>
+        </Box>  
+        <Container maxWidth="sm" style={{ marginTop: "-60px" }}>
           <Formik
-            initialValues={{
-              email: 'demo@devias.io',
-              password: 'Password123'
-            }}
-            validationSchema={Yup.object().shape({
-              email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-              password: Yup.string().max(255).required('Password is required')
-            })}
+            initialValues={values}
+            // validationSchema={Yup.object().shape({
+            //   email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
+            //   password: Yup.string().max(255).required('Password is required')
+            // })}
             onSubmit={() => {
-              navigate('/app/dashboard', { replace: true });
+              console.log('email', values)
+              //onLogin();
             }}
           >
             {({
@@ -54,7 +112,7 @@ const Login = () => {
               touched,
               values
             }) => (
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={onLogin}>
                 <Box sx={{ mb: 3 }}>
                   <Typography
                     color="textPrimary"
@@ -67,7 +125,7 @@ const Login = () => {
                     gutterBottom
                     variant="body2"
                   >
-                    Sign in on the internal platform
+                    Hi there! nice to see you again
                   </Typography>
                 </Box>
                 <Grid
@@ -83,7 +141,7 @@ const Login = () => {
                       color="primary"
                       fullWidth
                       startIcon={<FacebookIcon />}
-                      onClick={handleSubmit}
+                      //onClick={handleSubmit}
                       size="large"
                       variant="contained"
                     >
@@ -98,7 +156,7 @@ const Login = () => {
                     <Button
                       fullWidth
                       startIcon={<GoogleIcon />}
-                      onClick={handleSubmit}
+                      //onClick={handleSubmit}
                       size="large"
                       variant="contained"
                     >
@@ -119,6 +177,13 @@ const Login = () => {
                   >
                     or login with email address
                   </Typography>
+                  {error&&
+                    <p
+                      style={{textALign: "center", color: "red"}}
+                    >
+                      Vous n'etes pas autoriser a voir ce contenu
+                    </p>
+                  }
                 </Box>
                 <TextField
                   error={Boolean(touched.email && errors.email)}
@@ -128,9 +193,9 @@ const Login = () => {
                   margin="normal"
                   name="email"
                   onBlur={handleBlur}
-                  onChange={handleChange}
+                  onChange={(e)=>setEmail(e.target.value)}
                   type="email"
-                  value={values.email}
+                  value={email}
                   variant="outlined"
                 />
                 <TextField
@@ -141,9 +206,9 @@ const Login = () => {
                   margin="normal"
                   name="password"
                   onBlur={handleBlur}
-                  onChange={handleChange}
+                  onChange={(e)=>setPass(e.target.value)}
                   type="password"
-                  value={values.password}
+                  value={password}
                   variant="outlined"
                 />
                 <Box sx={{ py: 2 }}>
@@ -158,20 +223,22 @@ const Login = () => {
                     Sign in now
                   </Button>
                 </Box>
-                <Typography
-                  color="textSecondary"
-                  variant="body1"
-                >
-                  Don&apos;t have an account?
-                  {' '}
-                  <Link
-                    component={RouterLink}
-                    to="/register"
-                    variant="h6"
+                {/*
+                  <Typography
+                    color="textSecondary"
+                    variant="body1"
                   >
-                    Sign up
-                  </Link>
-                </Typography>
+                    Don&apos;t have an account?
+                    {' '}
+                    <Link
+                      component={RouterLink}
+                      to="/register"
+                      variant="h6"
+                    >
+                      Sign up
+                    </Link>
+                  </Typography>
+                */}
               </form>
             )}
           </Formik>

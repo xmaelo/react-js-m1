@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   Box,
-  Button,
+  Button, 
   Card,
   CardContent,
   TextField,
@@ -11,7 +11,8 @@ import {
 import { Search as SearchIcon } from 'react-feather';
 import { bounceOutDown } from 'react-animations';
 import Radium, { StyleRoot } from 'radium';
-import AddPatient from './AddPatient';
+
+import AddMedecin from './AddMedecin';
 
 
 const styles = {
@@ -20,12 +21,13 @@ const styles = {
     animationName: Radium.keyframes(bounceOutDown, 'bounce')
   }
 };
-function CustomerListToolbar(props){
+ 
+function DoctorListToolbar(props){
   const [showForm, setShowForm] = useState(false);
-  
+
   return(
     <>
-      { showForm&&<AddPatient setShowForm={setShowForm} /> }
+      { showForm&&<AddMedecin setShowForm={setShowForm} /> }
       { !showForm &&
           <Box {...props}>
             <Box
@@ -45,7 +47,7 @@ function CustomerListToolbar(props){
                 variant="contained"
                 onClick={()=>setShowForm(true)}
               >
-                Nouveau Patients
+                Nouveau Médecin
               </Button>
             </Box>
             <Box sx={{ mt: 3 }}>
@@ -79,4 +81,4 @@ function CustomerListToolbar(props){
   )
 };
 
-export default CustomerListToolbar;
+export default DoctorListToolbar;

@@ -21,14 +21,9 @@ const Sales = (props) => {
         backgroundColor: colors.indigo[500],
         data: [18, 5, 19, 27, 29, 19, 20],
         label: 'This year'
-      },
-      {
-        backgroundColor: colors.grey[200],
-        data: [11, 20, 12, 29, 30, 25, 13],
-        label: 'Last year'
       }
     ],
-    labels: ['1 Aug', '2 Aug', '3 Aug', '4 Aug', '5 Aug', '6 Aug']
+    labels: ['Jan', 'Fev', 'Mar', 'Avr', 'Mai']
   };
 
   const options = {
@@ -95,10 +90,10 @@ const Sales = (props) => {
             size="small"
             variant="text"
           >
-            Last 7 days
+            Dernier 7 jours
           </Button>
         )}
-        title="Latest Sales"
+        title="Nombre d'infectés par mois"
       />
       <Divider />
       <CardContent>

@@ -9,19 +9,30 @@ import {
   Divider,
   Typography
 } from '@material-ui/core';
-import getInitials from 'src/utils/getInitials';
 
 const user = {
-  //avatar: '/static/images/avatar.jpg',
+  avatar: '/static/images/avatar.jpg',
   city: 'Los Angeles',
   country: 'USA',
   jobTitle: 'Senior Developer',
   name: 'Katarina Smith',
-  timezone: 'GTM-7',
-  email: "ismae@jdh"
+  timezone: 'GTM-7'
 };
 
-const AccountProfile = (props) => (
+function timeConverter(UNIX_timestamp){
+  let a = new Date(UNIX_timestamp * 1000);
+  let months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  let year = a.getFullYear();
+  let month = months[a.getMonth()];
+  let date = a.getDate();
+  let hour = a.getHours();
+  let min = a.getMinutes();
+  let sec = a.getSeconds();
+  let time = date + ' ' + month + ' ' + year + ' à ' + hour + ':' + min + ':' + sec ;
+  return time;
+}
+
+const AccountProfileDoctor = (props) => (
   <Card {...props}>
     <CardContent>
       <Box
@@ -32,32 +43,30 @@ const AccountProfile = (props) => (
         }}
       >
         <Avatar
-          src={user.avatar}
+          src={props.profile}   
           sx={{
             height: 100,
             width: 100
           }}
-        >
-        {getInitials(user.email)}
-        </Avatar>
+        />
         <Typography
           color="textPrimary"
-          gutterBottom
+          gutterBottom 
           variant="h3"
         >
-          {user.name}
+          {props.nom_complet}
         </Typography>
         <Typography
           color="textSecondary"
           variant="body1"
         >
-          {`${user.city} ${user.country}`}
+          {props.specialite}
         </Typography>
         <Typography
           color="textSecondary"
           variant="body1"
         >
-          {`${moment().format('hh:mm A')} ${user.timezone}`}
+          {"Inscrit le "+ timeConverter(props.createdAt)}
         </Typography>
       </Box>
     </CardContent>
@@ -68,10 +77,10 @@ const AccountProfile = (props) => (
         fullWidth
         variant="text"
       >
-        Upload picture
+        Changer cette phote
       </Button>
     </CardActions>
   </Card>
 );
 
-export default AccountProfile;
+export default AccountProfileDoctor;

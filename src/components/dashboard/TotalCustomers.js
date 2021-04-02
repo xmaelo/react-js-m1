@@ -24,7 +24,7 @@ const TotalCustomers = (props) => (
             gutterBottom
             variant="h6"
           >
-            TOTAL CUSTOMERS
+            INFECTÉS
           </Typography>
           <Typography
             color="textPrimary"
@@ -66,7 +66,7 @@ const TotalCustomers = (props) => (
           color="textSecondary"
           variant="caption"
         >
-          Since last month
+          En évolution
         </Typography>
       </Box>
     </CardContent>

@@ -4,17 +4,14 @@ import {
   Card,
   CardContent,
   Grid,
-  LinearProgress,
   Typography
 } from '@material-ui/core';
-import { orange } from '@material-ui/core/colors';
-import InsertChartIcon from '@material-ui/icons/InsertChartOutlined';
+import { green, orange } from '@material-ui/core/colors';
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
+import PeopleIcon from '@material-ui/icons/PeopleOutlined';
 
 const TasksProgress = (props) => (
-  <Card
-    sx={{ height: '100%' }}
-    {...props}
-  >
+  <Card {...props}>
     <CardContent>
       <Grid
         container
@@ -27,13 +24,13 @@ const TasksProgress = (props) => (
             gutterBottom
             variant="h6"
           >
-            TASKS PROGRESS
+            DECEDES
           </Typography>
           <Typography
             color="textPrimary"
             variant="h3"
           >
-            75.5%
+            3
           </Typography>
         </Grid>
         <Grid item>
@@ -44,15 +41,33 @@ const TasksProgress = (props) => (
               width: 56
             }}
           >
-            <InsertChartIcon />
+            <PeopleIcon />
           </Avatar>
         </Grid>
       </Grid>
-      <Box sx={{ pt: 3 }}>
-        <LinearProgress
-          value={75.5}
-          variant="determinate"
-        />
+      <Box
+        sx={{
+          alignItems: 'center',
+          display: 'flex',
+          pt: 2
+        }}
+      >
+        <ArrowUpwardIcon sx={{ color: green[900] }} />
+        <Typography
+          variant="body2"
+          sx={{
+            color: green[900],
+            mr: 1
+          }}
+        >
+          16%
+        </Typography>
+        <Typography
+          color="textSecondary"
+          variant="caption"
+        >
+          En baisse
+        </Typography>
       </Box>
     </CardContent>
   </Card>

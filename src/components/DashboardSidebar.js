@@ -1,6 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import {
   Avatar,
   Box,
@@ -8,8 +9,10 @@ import {
   Divider,
   Drawer,
   Hidden,
-  List,
-  Typography
+  TextField,
+  List, 
+  Typography,
+  ListItem
 } from '@material-ui/core';
 import {
   AlertCircle as AlertCircleIcon,
@@ -21,66 +24,109 @@ import {
   UserPlus as UserPlusIcon,
   Users as UsersIcon
 } from 'react-feather';
+import getInitials from 'src/utils/getInitials';
+import { bounceInUp } from 'react-animations';
+import Radium, { StyleRoot } from 'radium';
 import NavItem from './NavItem';
+import { auth } from '../pages/firebase';
+
+const styles = {
+  bounceInUp: {
+    animation: 'x 2s',
+    animationName: Radium.keyframes(bounceInUp, 'bounce')
+  }
+};
+
 
 const user = {
-  avatar: '/static/images/avatars/avatar_6.png',
+  //avatar: '/static/images/avatars/avatar_6.png',
   jobTitle: 'Senior Developer',
-  name: 'Katarina Smith'
+  name: 'Ismael foletia',
+  email: "ismae@hgn.com"
 };
 
 const items = [
   {
-    href: '/app/dashboard',
+    href: '/',
     icon: BarChartIcon,
     title: 'Dashboard'
   },
   {
-    href: '/app/customers',
+    href: '/patients',
     icon: UsersIcon,
-    title: 'Customers'
+    title: 'Patients'
   },
   {
-    href: '/app/products',
-    icon: ShoppingBagIcon,
-    title: 'Products'
+    href: '/medecins',
+    icon: UsersIcon,
+    title: 'Medecins'
   },
+  // {
+  //   href: 'products',
+  //   icon: ShoppingBagIcon,
+  //   title: 'Products'
+  // },
   {
-    href: '/app/account',
-    icon: UserIcon,
-    title: 'Account'
-  },
-  {
-    href: '/app/settings',
+    href: 'configuration',
     icon: SettingsIcon,
-    title: 'Settings'
+    title: 'Configuration'
   },
-  {
-    href: '/login',
-    icon: LockIcon,
-    title: 'Login'
-  },
-  {
-    href: '/register',
-    icon: UserPlusIcon,
-    title: 'Register'
-  },
-  {
-    href: '/404',
-    icon: AlertCircleIcon,
-    title: 'Error'
-  }
+  // {
+  //   href: 'account',
+  //   icon: UserIcon,
+  //   title: 'Account'
+  // },
+  // {
+  //   href: 'settings',
+  //   icon: SettingsIcon,
+  //   title: 'Settings'
+  // },
+  // {
+  //   href: '/login',
+  //   icon: LockIcon,
+  //   title: 'Login'
+  // },
+  // {
+  //   href: '/register',
+  //   icon: UserPlusIcon,
+  //   title: 'Register'
+  // },
+  // {
+  //   href: '/404',
+  //   icon: AlertCircleIcon,
+  //   title: 'Error'
+  // }
 ];
 
 const DashboardSidebar = ({ onMobileClose, openMobile }) => {
   const location = useLocation();
+  const [showForm, setShowform] = useState(false);
+  const [error, setError] = useState(false);
+  const [values, setValues] = useState({});
 
+  function onAddAdmin(){
+    setShowform(!showForm);
+  }
   useEffect(() => {
     if (openMobile && onMobileClose) {
       onMobileClose();
     }
   }, [location.pathname]);
 
+  async function onSaveAdmin(){
+    setError(false);
+    if(!values.password || !values.email){
+      setError(true);
+      return;
+    }
+    const r = await fetch('http://localhost:3002/create-admin', {
+       method: 'POST',
+       headers: { 'Content-Type': 'application/json' },
+       body: JSON.stringify(values)
+      });
+    console.log('after run', r);
+    setShowform(false);
+  }
   const content = (
     <Box
       sx={{
@@ -98,26 +144,20 @@ const DashboardSidebar = ({ onMobileClose, openMobile }) => {
         }}
       >
         <Avatar
-          component={RouterLink}
           src={user.avatar}
           sx={{
             cursor: 'pointer',
             width: 64,
             height: 64
           }}
-          to="/app/account"
-        />
+        >
+          {getInitials(auth.currentUser?.email)}
+        </Avatar>
         <Typography
           color="textPrimary"
           variant="h5"
         >
-          {user.name}
-        </Typography>
-        <Typography
-          color="textSecondary"
-          variant="body2"
-        >
-          {user.jobTitle}
+          {auth.currentUser?.email}
         </Typography>
       </Box>
       <Divider />
@@ -131,46 +171,95 @@ const DashboardSidebar = ({ onMobileClose, openMobile }) => {
               icon={item.icon}
             />
           ))}
+          <ListItem
+            disableGutters
+            sx={{
+              display: 'flex',
+              py: 0
+            }}
+          >
+            <Button
+              sx={{
+                color: 'text.secondary',
+                fontWeight: 'medium',
+                justifyContent: 'flex-start',
+                letterSpacing: 0,
+                py: 1.25,
+                textTransform: 'none',
+                color: 'primary.main'
+              }}
+              onClick={()=>onAddAdmin()}
+            >
+                <ArrowUpwardIcon size="20" />
+              <span>
+                {"AJouter un admin"}
+              </span>
+            </Button>
+          </ListItem>
         </List>
       </Box>
       <Box sx={{ flexGrow: 1 }} />
-      <Box
-        sx={{
-          backgroundColor: 'background.default',
-          m: 2,
-          p: 2
-        }}
-      >
-        <Typography
-          align="center"
-          gutterBottom
-          variant="h4"
-        >
-          Need more?
-        </Typography>
-        <Typography
-          align="center"
-          variant="body2"
-        >
-          Upgrade to PRO version and access 20 more screens
-        </Typography>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            pt: 2
-          }}
-        >
-          <Button
-            color="primary"
-            component="a"
-            href="https://react-material-kit.devias.io"
-            variant="contained"
-          >
-            See PRO version
-          </Button>
-        </Box>
-      </Box>
+      {showForm &&
+        <StyleRoot>
+          <div style={styles.bounceInUp}>
+            <Box
+              sx={{
+                backgroundColor: 'background.default',
+                m: 2,
+                p: 2
+              }}
+            >
+              <Typography
+                align="center"
+                gutterBottom
+                variant="h4" 
+              >
+                AJout d'un admin
+              </Typography>
+              <Box
+                sx={{
+                  //display: 'flex',
+                  justifyContent: 'center',
+                  pt: 2
+                }}
+              > 
+               {error&&<p style={{color: 'red'}}>Vous n'avez pas remplir tout les champ</p>}
+                <TextField
+                    fullWidth
+                    label="Email"
+                    margin="normal"
+                    name="email"
+                    //onBlur={handleBlur}
+                    onChange={(e)=>setValues({...values, email: e.target.value})}
+                    type="email"
+                    value={values.email}
+                    variant="outlined"
+                  />
+                  <TextField
+                    fullWidth
+                    label="Password"
+                    margin="normal"
+                    name="password"
+                    helperText="Au moins 6 deigits"
+                    //onBlur={handleBlur}
+                    onChange={(e)=>setValues({...values, password: e.target.value})}
+                    type="password"
+                    value={values.password}
+                    variant="outlined"
+                  />
+
+                <Button
+                  color="primary"
+                  onClick={()=>onSaveAdmin()}
+                  variant="contained"
+                >
+                  Sauvegarder
+                </Button>
+              </Box>
+            </Box>
+          </div>
+        </StyleRoot>
+      }
     </Box>
   );
 

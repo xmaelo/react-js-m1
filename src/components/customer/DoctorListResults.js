@@ -9,9 +9,11 @@ import VisibilityIcon from '@material-ui/icons/Visibility';
 import {
   Avatar,
   Box,
+  Button,
   Card,
   Checkbox,
   Table,
+  Link,
   TableBody,
   TableCell,
   TableHead,
@@ -19,9 +21,16 @@ import {
   TableRow,
   Typography
 } from '@material-ui/core';
+import {
+  matchPath,
+  Link as RouterLink,
+  useLocation
+} from 'react-router-dom'
+
 import getInitials from 'src/utils/getInitials';
 
-const CustomerListResults = ({ customers, ...rest }) => {
+
+const DoctorListResults = ({ customers, ...rest }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
@@ -94,10 +103,10 @@ const CustomerListResults = ({ customers, ...rest }) => {
                   Télephone
                 </TableCell>
                 <TableCell>
-                  Addresse
+                  Spécialité
                 </TableCell>
                 <TableCell>
-                  Date d'inscription
+                  Date d'enregistrement
                 </TableCell>
                 <TableCell>
                   Options
@@ -108,13 +117,13 @@ const CustomerListResults = ({ customers, ...rest }) => {
               {customers.slice(0, limit).map((customer) => (
                 <TableRow
                   hover
-                  key={customer.userId}
-                  selected={selectedCustomerIds.indexOf(customer.userId) !== -1}
+                  key={customer.id}
+                  selected={selectedCustomerIds.indexOf(customer.id) !== -1}
                 >
                   <TableCell padding="checkbox">
                     <Checkbox
-                      checked={selectedCustomerIds.indexOf(customer.userId) !== -1}
-                      onChange={(event) => handleSelectOne(event, customer.userId)}
+                      checked={selectedCustomerIds.indexOf(customer.id) !== -1}
+                      onChange={(event) => handleSelectOne(event, customer.id)}
                       value="true"
                     />
                   </TableCell>
@@ -126,7 +135,7 @@ const CustomerListResults = ({ customers, ...rest }) => {
                       }}
                     >
                       <Avatar
-                        src={customer.profile}
+                        src={customer.avatarUrl}
                         sx={{ mr: 2 }}
                       >
                         {getInitials(customer.nom_complet)}
@@ -146,21 +155,27 @@ const CustomerListResults = ({ customers, ...rest }) => {
                     {customer.phone}
                   </TableCell>
                   <TableCell>
-                    {`${customer.city}, ${customer.state}`}
+                    {customer.specialite}
                   </TableCell>
                   <TableCell>
-                    { customer.createAt ? moment(customer.createAt).format('DD/MM/YYYY') : moment(new Date()).format('DD/MM/YYYY')}
+                    {moment(customer.createdAt).format('DD/MM/YYYY')}
                   </TableCell>
                   <TableCell>
                     <Grid container spacing={3}>
                       <Grid item xs={4}>
-                        {/*<EditIcon sx={{ fontSize: '25px' }} />*/}
+                          <Link
+                            component={RouterLink}
+                            to={customer.id}
+                          >
+                            <VisibilityIcon sx={{ fontSize: '25px' }} />
+                          </Link>
                       </Grid>
                       <Grid item xs={4}>
-                        {<DeleteOutlineIcon sx={{ color: 'red', fontSize: '25px' }} />}
-                      </Grid>
-                      <Grid item xs={4}>
-                         {/*<VisibilityIcon sx={{ fontSize: '25px' }} />*/}
+                        <Button
+                            onClick={()=>{}}
+                          >
+                            <DeleteOutlineIcon sx={{ color: 'red', fontSize: '25px' }} />
+                          </Button>
                       </Grid>
                     </Grid>
                   </TableCell>
@@ -183,8 +198,8 @@ const CustomerListResults = ({ customers, ...rest }) => {
   );
 };
 
-CustomerListResults.propTypes = {
+DoctorListResults.propTypes = {
   customers: PropTypes.array.isRequired
 };
 
-export default CustomerListResults;
+export default DoctorListResults;
