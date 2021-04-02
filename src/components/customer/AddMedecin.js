@@ -255,7 +255,7 @@ export default function CustomizedSteppers({setShowForm}) {
           setError(true);
           return;
         }
-          const r = await fetch('http://localhost:3002/create-doctor', {
+          const r = await fetch('http://login.mamed.care:3002/create-doctor', {
            method: 'POST',
            headers: { 'Content-Type': 'application/json' },
            body: JSON.stringify(va)
