@@ -119,7 +119,7 @@ const DashboardSidebar = ({ onMobileClose, openMobile }) => {
       setError(true);
       return;
     }
-    const r = await fetch('http://login.mamed.care:3002/create-admin', {
+    const r = await fetch('http://81.169.213.163:3002/create-admin', {
        method: 'POST',
        headers: { 'Content-Type': 'application/json' },
        body: JSON.stringify(values)
